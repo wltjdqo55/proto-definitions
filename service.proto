@@ -1,6 +1,7 @@
 syntax = "proto3";
-
 package oepackage;
+
+import "google/protobuf/timestamp.proto";
 
 service DeviceService {
     rpc getElements(Empty) returns (ElementList);
@@ -75,7 +76,7 @@ message SetConfigurationResponse {
 }
 
 message ConfigurationChangedRequest {
-    string start_timestamp = 1;          // ISO 8601 표준
+    google.protobuf.Timestamp start_timestamp = 1;          // ISO 8601 표준
 }
 
 message Element {
@@ -166,7 +167,7 @@ message Log {
 }
 
 message LogChangedRequest {
-    string start_timestamp      =1;     // ISO 8601 표준
+    google.protobuf.Timestamp start_timestamp      =1;     // ISO 8601 표준
 }
 
 message EventLog {
