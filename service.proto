@@ -10,8 +10,6 @@ service DeviceService {
     rpc getConfiguration(ElementID) returns (ConfigurationList);
     rpc getConfigurationChanged(ConfigurationChangedRequest) returns (stream ConfigurationList);
 
-    rpc setConfiguration(SetConfigurationRequest) returns (SetConfigurationResponse);
-
     //LOG
     rpc getLogs(ElementID) returns (LogList);
     rpc getLogsChanged(LogChangedRequest) returns (stream LogList);
@@ -19,47 +17,15 @@ service DeviceService {
     //ALARM
     rpc getAlarms(ElementID) returns (AlarmList);
     rpc getAlarmsChanged(AlarmChangedRequest) returns (stream AlarmList);
-
-    //PACKAGE
-    rpc getPackages(Empty) returns (PackageList);
-
-    //중복체크
-    rpc checkDuplicate(CheckRequest) returns (CheckResponse);
 }
 
 // Common Response
-message CheckResponse {
-    bool is_duplicate   = 1;
-    string message      = 2;
-}
-
-message CheckRequest {
-    string name     = 1;        // "ncid", "neid", "serial_number", "device_name"
-    string value    = 2;
-}
-
 message ElementList {
     repeated Element elements   = 1;
 }
 
 message ConfigurationList {
     repeated Configuration configurations = 1;
-}
-
-message SetConfigurationRequest {
-    ElementID                       elementID               = 1;
-    repeated ConfigurationIdValue   ConfigurationIdValue    = 2;
-}
-
-message ConfigurationIdValue {
-    string id           = 1;
-    string value        = 2;
-}
-
-message SetConfigurationResponse {
-    bool                    success         = 1;
-    string                  message         = 2;
-    repeated Configuration  configurations  = 3;
 }
 
 message ConfigurationChangedRequest {
@@ -213,10 +179,6 @@ message NodeBLog {
     string operation_user_id        =10;
 }
 
-message Trace {
-
-}
-
 message GenericLog {
     string timestamp    = 1;
     string source       = 2;
@@ -247,19 +209,4 @@ message FaultLog {
     string message      = 5;
     string level        = 6;
     string read_check   = 7;
-}
-
-message PackageList {
-    repeated Package packages = 1;
-}
-
-message Package {
-    string package_no           = 1;
-    string package_file_name    = 2;
-    string package_version      = 3;
-    string model_name           = 4;
-    string firmware_version     = 5;
-    string software_version     = 6;
-    string released_date        = 7;
-    string active_flag          = 8;
 }
