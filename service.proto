@@ -29,7 +29,7 @@ message ConfigurationList {
 }
 
 message ConfigurationChangedRequest {
-    google.protobuf.Timestamp start_timestamp = 1;
+    Timestamp start_timestamp = 1;
 }
 
 message Element {
@@ -67,7 +67,7 @@ message Alarm {
 }
 
 message AlarmChangedRequest {
-    google.protobuf.Timestamp start_timestamp      =1;
+    Timestamp start_timestamp      =1;
 }
 
 message GenericAlarm {
@@ -116,7 +116,7 @@ message Log {
 }
 
 message LogChangedRequest {
-    google.protobuf.Timestamp start_timestamp      =1;
+    Timestamp start_timestamp      =1;
 }
 
 message EventLog {
