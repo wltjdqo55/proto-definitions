@@ -16,154 +16,16 @@ service DeviceService {
     rpc getLogs(ElementID) returns (LogList);
     rpc getLogsChanged(LogChangedRequest) returns (stream LogList);
 
-    //DIVICE
-    // rpc getDevice(DeviceRequest) returns (Device);
-    // rpc getDevices(DeviceParams) returns (DeviceList);
-
     //ALARM
     rpc getAlarms(ElementID) returns (AlarmList);
     rpc getAlarmsChanged(AlarmChangedRequest) returns (stream AlarmList);
-
-    //STATE
-    // rpc getServerState(Empty) returns (ServerState);
 
     //PACKAGE
     rpc getPackages(Empty) returns (PackageList);
 
     //중복체크
     rpc checkDuplicate(CheckRequest) returns (CheckResponse);
-
-// =================== RPC 추가 =========================
-    // //LOGIN
-    // rpc login(LoginRequest) returns (LoginResponse);                            // 로그인 API
-
-    // //CLI
-    // rpc getCLIs(ElementID) returns (CLIList);                                   // CLI 목록 조회
-
-    // //PLD   
-    // rpc getPLDs(ElementID) returns (PLDList);                                   // PLD 목록 조회                          
-
-    // //NEIGHBOR
-    // rpc getNeighbor(ElementID) returns (NeighborList);                          // Neighbor 목록 조회
-
-    // //모듈 재시작 (AMF, SMF, UPF, UDP, System, DNN, Support_GNB, HSS, MME, PGW, SGW)
-    // rpc moduleRestart(ModuleRestartRequest) returns (ModuleRestartResponse);    // 모듈 재시작
-
-    // //라이센스 조회
-    // // rpc getLicense(Empty) returns ();
-
-    // //UE 조회
-    // rpc getUEs(Empty) returns (UEList);
-
-// ===================RPC 추가 끝=========================
-
-
 }
-
-// ===================메세지 추가=========================
-
-// message LoginRequest {
-//     string id           = 1;
-//     string password     = 2;
-// }
-
-// message LoginResponse {
-//     bool isLogin        = 1;
-//     string message      = 2;
-//     string token        = 3;
-// }
-
-// message CLIList {
-//     repeated CLINode nodes      = 1;        // CLI 노드
-// }
-
-// message CLINode {
-//     string command_alias                = 1;
-//     string command_timeout              = 2;
-//     string command_target               = 3;
-//     string job_group                    = 4;
-//     string description                  = 5;
-
-//     repeated CLIParameter parameters    = 6;            // CLIParameter는 따로 rpc 요청하는 식으로
-// }
-
-// message CLIParameter {
-//     string parameter_name               = 1;
-//     string parameter_alias              = 2;
-//     string parameter_type               = 3;
-//     string parameter_default_value      = 4;
-//     string value_range_start            = 5;
-//     string value_range_end              = 6;
-// }
-
-// message PLDList {
-//     repeated PLDParameger parameters    = 1;
-// }
-
-// message PLDParameger {
-//     int32  device_id                    = 1;                // 기지국 아이디
-//     int32  parameter_id                 = 2;                // 파라미터 아이디 
-//     string parameter_name               = 3;                // 파라미터 이름
-//     string parameter_value              = 4;                // 값
-//     string parameter_type               = 5;                // 타입
-//     string value_range_start            = 6;                // 시작 범위
-//     string value_range_end              = 7;                // 끝 범위
-//     string is_unit                      = 8;                // 단위
-//     string is_pld                       = 9;                // PLD유무
-//     string read_write                   = 10;               // 읽기/쓰기
-// }
-
-// message NeighborList {
-//     repeated Neighbor neighbors         = 1;
-// }
-
-// message Neighbor {
-//     string device_id                    = 1;
-//     string device_name                  = 2;
-//     string index                        = 3;
-//     string id                           = 4;
-//     string isESCoveredBy                = 5;
-//     string isHOAllowed                  = 6;
-//     string ps_gnb_id                    = 7;
-//     string ps_gnb_id_length             = 8;
-//     string ps_cell_localld              = 9;
-//     string ps_nRPCI                     = 10;
-//     string ps_nRTAC                     = 11;
-//     string ps_mcc                       = 12;
-//     string ps_mnc                       = 13;
-// }
-
-// message ModuleRestartRequest {
-//     string name             = 1;                // 소문자 + 스네이크 케이스로 표기  => ex) "smf", "amf", "support_gnb", "system"
-// }
-
-// message ModuleRestartResponse {
-//     bool   success          = 1;
-//     string message          = 2;
-// }
-
-// message UEList {
-//     repeated UE ues         = 1;
-// }
-
-// message UE {
-//     string core_name        = 1;
-//     string core_type        = 2;
-//     string imsi_supi        = 3;
-//     string msisdn           = 4;
-//     string gk               = 5;
-//     string op               = 6;
-//     string op_flag          = 7;
-//     string apencxtld        = 8;
-//     string ul_ambr          = 9;
-//     string dl_ambr          = 10;
-//     string plmn             = 11;
-//     string qci              = 12;
-//     string amf              = 13;
-//     string imei             = 14;
-// }
-
-// ===================메세지 추가 끝=========================
 
 // Common Response
 message CheckResponse {
@@ -183,38 +45,6 @@ message ElementList {
 message ConfigurationList {
     repeated Configuration configurations = 1;
 }
-
-// message DeviceRequest {
-//     string id           = 1;
-//     string deviceId     = 2;
-// }
-
-// message DeviceList {
-//     repeated Device devices = 1;
-//     string cnt = 2;
-// }
-
-// message Device {
-//     string henb_id = 1;
-//     string logical_henb_id = 2;
-//     string side = 3;
-//     string active_flag = 4;
-//     string hems_id = 5;
-//     string serial_number = 6;
-//     string oui = 7;
-//     string henb_name = 8;
-//     string ne_id = 9;
-//     string device_type_id = 10;
-//     string mgmt_ip = 11;
-//     string mgmt_port = 12;
-//     string auto_upgrade_flag = 13;
-//     string status = 14;
-//     string regist_date = 15;
-//     string updated_date = 16;
-//     string location_info = 17;
-//     string main_area = 18;
-//     string sub_area = 19;
-// }
 
 message SetConfigurationRequest {
     ElementID                       elementID               = 1;
@@ -250,14 +80,6 @@ message Element {
 message ElementID {
     string id = 1;
 }
-
-// message ConfigurationName {
-//     string name = 1;
-// }
-
-// message ConfigurationValue {
-//     string value = 1;
-// }
 
 message Configuration {
     string id           = 1;
@@ -426,14 +248,6 @@ message FaultLog {
     string level        = 6;
     string read_check   = 7;
 }
-
-// message ServerState {                    // oam => configuration 참조
-//     string date             = 1;         // ems => 제외
-//     string server_address   = 2;
-//     string cpu_util         = 3;
-//     string memory_util      = 4;
-//     string disk_util        = 5;
-// }
 
 message PackageList {
     repeated Package packages = 1;
