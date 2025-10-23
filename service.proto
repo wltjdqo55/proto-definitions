@@ -112,7 +112,6 @@ message Log {
         CLILog          cli_log                 =7;
         NodeBLog        nodeb_log               =8;
         CurrentLog      ems_fault_log           =9;
-        Trace           trace                   =10;
     }
 }
 
