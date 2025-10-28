@@ -4,32 +4,100 @@ package oepackage;
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
-service DeviceService {
-    rpc getElements(Empty) returns (ElementList);
-    rpc getConfiguration(ElementID) returns (ConfigurationList);
-    rpc getConfigurationChanged(ConfigurationChangedRequest) returns (stream ConfigurationList);
 
-    //LOG
-    rpc getLogs(ElementID) returns (LogList);
-    rpc getLogsChanged(LogChangedRequest) returns (stream LogList);
+service ElementService {
 
-    //ALARM
-    rpc getAlarms(ElementID) returns (AlarmList);
-    rpc getAlarmsChanged(AlarmChangedRequest) returns (stream AlarmList);
+    rpc listElements(Empty) returns (ListElementsResponse);
+    rpc getElement(GetElementRequest) returns (Element);
+    rpc getElements(Empty) returns (GetElementsResponse);
+    
+
+    rpc listConfigurations(Empty) returns (ListConfigurationsResponse);
+    rpc getConfiguration(GetConfigurationRequest) returns (Configuration);
+    rpc getConfigurationsChangedSince(Timestamp) returns (stream GetConfigurationsResponse);
+    rpc getElementConfigurations(GetElementConfigurationsRequest) returns (GetConfigurationsResponse);
+
+
+    rpc getAlarms(Empty) returns (GetAlarmsResponse);
+    rpc getAlarmsChangedSince(Timestamp) returns (stream GetAlarmsResponse);
+    rpc getElementAlarms(GetElementAlarmsRequest) returns (GetAlarmsResponse);
+    
+
+    rpc getLogs(Empty) returns (GetLogsResponse);
+    rpc getLogsChangedSince(Timestamp) returns (stream GetLogsResponse);
+    rpc getElementLogs(GetElementLogsRequest) returns (GetLogsResponse);
+
+
+    rpc listTypes(Empty) returns (ListTypesResponse);
+    rpc getTypes(Empty) returns (GetTypesResponse);
+
+
+    rpc listCommands(Empty) returns (ListCommandsResponse);
+    rpc getCommands(Empty) returns (GetCommandsResponse);
 }
 
-// Common Response
-message ElementList {
-    repeated Element elements   = 1;
+message ListElementsResponse {
+    repeated ElementID elements = 1;
 }
 
-message ConfigurationList {
+message GetElementRequest {
+    ElementID element = 1;
+}
+
+message GetElementsResponse {
+    repeated Element elements = 1;
+}
+
+
+message ListConfigurationsResponse {
+    repeated ConfigurationID configurations = 1;
+}
+
+message GetConfigurationRequest {
+    ElementID element = 1;
+    ConfigurationID configuration = 2;
+}
+
+message GetConfigurationsResponse {
     repeated Configuration configurations = 1;
 }
 
-message ConfigurationChangedRequest {
-    Timestamp start_timestamp = 1;
+message GetElementConfigurationsRequest {
+    ElementID element = 1;
 }
+
+message GetAlarmsResponse {
+    repeated Alarm alarms = 1;
+}
+
+message GetElementAlarmsRequest {
+    ElementID element = 1;
+}
+
+message GetLogsResponse {
+    repeated Log logs = 1;
+}
+
+message GetElementLogsRequest {
+    ElementID element = 1;
+}    
+
+message ListTypesResponse {
+    repeated TypeID types = 1;
+}
+
+message GetTypesResponse {
+    repeated Type types = 1;
+}
+
+message ListCommandsResponse {
+    repeated CommandID commands = 1;
+}
+
+message GetCommandsResponse {
+    repeated Command commands = 1;
+}
+
 
 message Element {
     string id               = 1;
@@ -40,11 +108,13 @@ message Element {
     string tag              = 6;
     string serverAddress    = 7;
     string status           = 8;
+
+    /// Element Identifier
+    message ElementID {
+        string id = 1;
+    }
 }
 
-message ElementID {
-    string id = 1;
-}
 
 message Configuration {
     string id           = 1;
@@ -52,51 +122,67 @@ message Configuration {
     string name         = 3;
     string value        = 4;
     string description  = 5;
+
+    /// Configuration Identifier
+    message ConfigurationID {
+        string id = 1;
+    }
 }
 
-message AlarmList {
-    repeated Alarm alarms = 1;
+
+message Type {
+    string id = 1;
+
+    /// Type Identifier
+    message TypeID {
+        string id = 1;
+    }
 }
+
+
+message Command {
+    string id = 1;
+
+    /// Command Identifier
+    message CommandID {
+        string id = 1;
+    }
+}
+
 
 message Alarm {
     oneof alarm_type {
         GenericAlarm    generic_alarm           =1;
         CurrentAlarm    current_alarm           =2;    
     }
+
+
+    //// Embedded Messages ////
+    message GenericAlarm {
+        string element_id               =1;
+        string alarm_code               =2;
+        string event_time               =3;
+        string severity                 =4;
+        string alarm_type               =5;
+    }
+    message CurrentAlarm {
+        string element_id               = 1;
+        string element_name             = 2;
+        string alarm_code               = 3;
+        string alarm_raised_time        = 4;
+        string event_time               = 5;
+        string alarm_type               = 6;
+        string isACK                    = 7;
+        string alarm_loc                = 8;
+        string severity                 = 9;
+        string report_mechanism         = 10;
+        string probable_cause           = 11;
+        string specific_problem         = 12;
+        string additional_text          = 13;
+        string additional_information   = 14;
+    }
 }
 
-message AlarmChangedRequest {
-    Timestamp start_timestamp      =1;
-}
-
-message GenericAlarm {
-    string element_id               =1;
-    string alarm_code               =2;
-    string event_time               =3;
-    string severity                 =4;
-    string alarm_type               =5;
-}
-
-message CurrentAlarm {
-    string element_id               = 1;
-    string element_name             = 2;
-    string alarm_code               = 3;
-    string alarm_raised_time        = 4;
-    string event_time               = 5;
-    string alarm_type               = 6;
-    string isACK                    = 7;
-    string alarm_loc                = 8;
-    string severity                 = 9;
-    string report_mechanism         = 10;
-    string probable_cause           = 11;
-    string specific_problem         = 12;
-    string additional_text          = 13;
-    string additional_information   = 14;
-}
-
-message LogList {
-    repeated Log logs = 1;
-}
 
 message Log {
     string date = 1;
@@ -112,99 +198,89 @@ message Log {
         NodeBLog        nodeb_log               =8;
         CurrentLog      ems_fault_log           =9;
     }
-}
-
-message LogChangedRequest {
-    Timestamp start_timestamp      =1;
-}
-
-message EventLog {
-    string idx                  =1;
-    string element_id           =2;
-    string event_type           =3;
-    string event_code           =4;
-    string event_code_name      =5;
-    string event_head_str       =6;
-    string event_logfile_name   =7;
-    string context              =8;
-}
-
-message CurrentLog {
-    string alarm_history_no     =1;
-    string element_id           =2;
-    string alarm_code           =3;
-    string alarm_changed_time   =4;
-    string alarm_cleared_time   =5;
-    string event_time           =6;
-    string alarm_type           =7;
-    string alarm_state          =8;
-    string alarm_loc            =9;
-    string severity             =10;
-    string report_mechanism     =11;
-    string probable_cause       =12;
-    string specific_problem     =13;
-    string additional_text      =14;
-    string additional_information =15;
-}
-
-message CLILog {
-    string command_history_no       =1;
-    string command_id               =2;
-    string command_alias            =3;
-    string user_id                  =4;
-    string user_ip                  =5;
-    string element_id               =6;
-    string request_time             =7;
-    string response_time            =8;
-    string result                   =9;
-    string fail_reason              =10;
-    string command_head_str         =11;
-    string command_logfile_name     =12;
-    string context                  =13;
-    string transaction_id           =14;
-}
-
-message NodeBLog {
-    string device_history_no        =1;
-    string element_id               =2;
-    string hems_id                  =3;
-    string serial_number            =4;
-    string oui                      =5;
-    string element_name             =6;
-    string device_type_id           =7;
-    string operation_flag           =8;
-    string operation_time           =9;
-    string operation_user_id        =10;
-}
-
-message GenericLog {
-    string timestamp    = 1;
-    string source       = 2;
-    string level        = 3;
-    string message      = 4;
-    string labels       = 5;
-}
 
 
-message OperationLog {
-    string idx          = 1;
-    string module       = 2;
-    string message      = 3;
-    string level        = 4;
-}
-
-message WebLog {
-    string idx          = 1;
-    string user_name     = 2;
-    string event        = 3;
-}
-
-message FaultLog {
-    string idx          = 1;
-    string module       = 2;
-    string code         = 3;
-    string event        = 4;
-    string message      = 5;
-    string level        = 6;
-    string read_check   = 7;
+    //// Embedded Messages ////
+    message EventLog {
+        string idx                  =1;
+        string element_id           =2;
+        string event_type           =3;
+        string event_code           =4;
+        string event_code_name      =5;
+        string event_head_str       =6;
+        string event_logfile_name   =7;
+        string context              =8;
+    }
+    message CurrentLog {
+        string alarm_history_no     =1;
+        string element_id           =2;
+        string alarm_code           =3;
+        string alarm_changed_time   =4;
+        string alarm_cleared_time   =5;
+        string event_time           =6;
+        string alarm_type           =7;
+        string alarm_state          =8;
+        string alarm_loc            =9;
+        string severity             =10;
+        string report_mechanism     =11;
+        string probable_cause       =12;
+        string specific_problem     =13;
+        string additional_text      =14;
+        string additional_information =15;
+    }
+    message CLILog {
+        string command_history_no       =1;
+        string command_id               =2;
+        string command_alias            =3;
+        string user_id                  =4;
+        string user_ip                  =5;
+        string element_id               =6;
+        string request_time             =7;
+        string response_time            =8;
+        string result                   =9;
+        string fail_reason              =10;
+        string command_head_str         =11;
+        string command_logfile_name     =12;
+        string context                  =13;
+        string transaction_id           =14;
+    }
+    message NodeBLog {
+        string device_history_no        =1;
+        string element_id               =2;
+        string hems_id                  =3;
+        string serial_number            =4;
+        string oui                      =5;
+        string element_name             =6;
+        string device_type_id           =7;
+        string operation_flag           =8;
+        string operation_time           =9;
+        string operation_user_id        =10;
+    }
+    message GenericLog {
+        string timestamp    = 1;
+        string source       = 2;
+        string level        = 3;
+        string message      = 4;
+        string labels       = 5;
+    }
+    message OperationLog {
+        string idx          = 1;
+        string module       = 2;
+        string message      = 3;
+        string level        = 4;
+    }
+    message WebLog {
+        string idx          = 1;
+        string user_name     = 2;
+        string event        = 3;
+    }
+    message FaultLog {
+        string idx          = 1;
+        string module       = 2;
+        string code         = 3;
+        string event        = 4;
+        string message      = 5;
+        string level        = 6;
+        string read_check   = 7;
+    }
 }
